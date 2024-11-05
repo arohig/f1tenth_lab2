@@ -15,6 +15,7 @@ class SafetyNode(Node):
     """
     def __init__(self):
         super().__init__('safety_node')
+        self.get_logger().info(f'Initializating safety node')
         """
         One publisher should publish to the /drive topic with a AckermannDriveStamped drive message.
 
@@ -25,6 +26,16 @@ class SafetyNode(Node):
 
         NOTE that the x component of the linear velocity in odom is the speed
         """
+
+        # Subscriber to the /scan topic
+        self.scan_subscriber = self.create_subscription(
+            LaserScan,
+            '/scan',
+            self.scan_callback,
+            1000  # QoS history depth
+        )
+        self.get_logger().info('Subscribed to scan topic')
+
         self.speed = 0.
         # TODO: create ROS subscribers and publishers.
 
@@ -34,7 +45,7 @@ class SafetyNode(Node):
 
     def scan_callback(self, scan_msg):
         # TODO: calculate TTC
-        
+        self.get_logger().info(f'Received LaserScan with {len(scan_msg.ranges)} ranges')
         # TODO: publish command to brake
         pass
 
